@@ -3,17 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAT-1 Real-Time Ground Command System</title>
-</head>
-<body>
-  <h1>SAT-1: Interrupt-Driven Real-Time Ground Command System</h1>
-  <p>Andrew VanAuken | EEL 4775 Real-Time Systems Capstone</p>
 
-  <h2>Project Overview</h2>
-  <p>
-    SAT-1 is an interrupt-driven embedded system developed on the ESP32-S3
-    using FreeRTOS. The project demonstrates top-half and bottom-half
-    interrupt processing, task synchronization, and timing analysis.
-  </p>
+  <title>SAT-1 Real-Time Ground Command System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>SAT-1: Interrupt-Driven Real-Time Ground Command System</h1>
+
+    <p>
+      Andrew VanAuken |
+      EEL 4775 Real-Time Systems Final Integration Capstone
+    </p>
+
+    <p>
+      ESP32-S3 • FreeRTOS • Embedded C • Wokwi
+    </p>
+  </header>
+
+  <main>
+
+    <section id="overview">
+      <h2>Project Overview</h2>
+
+      <p>
+        SAT-1 is a space-themed embedded system developed on the ESP32-S3
+        using FreeRTOS. A pushbutton connected to GPIO18 simulates a ground
+        command sent to a satellite. Pressing the button generates a hardware
+        interrupt that activates a minimal Interrupt Service Routine.
+      </p>
+
+      <p>
+        The ISR signals two bottom-half tasks using a Binary Semaphore and a
+        Direct Task Notification. Their wake-up latency is measured under idle
+        and loaded processor conditions using the Wokwi Logic Analyzer.
+      </p>
+    </section>
+
+    <section id="demo">
+      <h2>Project Demo</h2>
+
+      <p>
+        <strong>Wokwi Project:</strong>
+        <a href="https://wokwi.com/projects/468122086654300161"
+           target="_blank"
+           rel="noopener noreferrer">
+          Open SAT-1 in Wokwi
+        </a>
+      </p>
+
+      <p>
+        <strong>Demo Video:</strong>
+        Add the YouTube link after recording.
+      </p>
+    </section>
+
+    <section id="architecture">
+      <h2>System Architecture</h2>
+
+      <pre>
+GPIO18 Button
+      |
+      v
+Hardware Interrupt
+      |
+      v
+IRAM_ATTR ISR
+      |
+      +------------------+
+      |                  |
+      v                  v
+Binary Semaphore   Direct Notification
+      |                  |
+      v                  v
+       Bottom-Half Tasks
+              |
+              v
+     Timing Results
+      </pre>
+
+      <p>
+        The ISR performs only ISR-safe operations. It records the interrupt
+        timestamp, generates a GPIO19 timing pulse, and signals the two
+        bottom-half tasks. Longer processing and reporting are deferred to
+        normal FreeRTOS task context.
+      </p>
+    </section>
+
+    <section id="timing">
+      <h2>Tasks and Timing Evidence</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Period</th>
+            <th>Priority</th>
+            <th>Deadline</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Load Task A</td>
+            <td>10 ms</td>
+            <td>15</td>
+            <td>10 ms</td>
+          </tr>
+
+          <tr>
+            <td>Load Task B</td>
+            <td>20 ms</td>
+            <td>10</td>
+            <td>20 ms</td>
+          </tr>
+
+          <tr>
+            <td>Load Task C</td>
+            <td>50 ms</td>
+            <td>5</td>
+            <td>50 ms</td>
+          </tr>
+
+          <tr>
+            <td>Load Task D</td>
+            <td>100 ms</td>
+            <td>2</td>
+            <td>100 ms</td>
+          </tr>
+
+          <tr>
+            <td>Binary Semaphore Task</td>
+            <td>Event-driven</td>
+            <td>12</td>
+            <td>Immediate</td>
+          </tr>
+
+          <tr>
+            <td>Direct Notification Task</td>
+            <td>Event-driven</td>
+            <td>12</td>
+            <td>Immediate</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Interrupt Response</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Configuration</th>
+            <th>GPIO18 to GPIO19</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Idle</td>
+            <td>21.593 µs</td>
+          </tr>
+
+          <tr>
+            <td>Loaded</td>
+            <td>21.593 µs</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Bottom-Half Wake-Up Latency</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Configuration</th>
+            <th>Binary Semaphore</th>
+            <th>Direct Notification</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Idle</td>
+            <td>2,644 µs</td>
+            <td>30 µs</td>
+          </tr>
+
+          <tr>
+            <td>Loaded</td>
+            <td>10,425 µs</td>
+            <td>18,996 µs</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="hazards">
+      <h2>Hazard Analysis</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Hazard</th>
+            <th>Effect</th>
+            <th>Mitigation</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Long ISR execution</td>
+            <td>Increased interrupt latency</td>
+            <td>Keep the ISR minimal and defer processing</td>
+          </tr>
+
+          <tr>
+            <td>Button bounce</td>
+            <td>Repeated interrupt events</td>
+            <td>Apply timestamp-based debounce logic</td>
+          </tr>
+
+          <tr>
+            <td>Missing scheduler yield</td>
+            <td>Delayed bottom-half execution</td>
+            <td>Use portYIELD_FROM_ISR()</td>
+          </tr>
+
+          <tr>
+            <td>Heavy processor load</td>
+            <td>Increased wake-up latency</td>
+            <td>Use fixed-priority scheduling and timing verification</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="degradation">
+      <h2>Fault Injection and Graceful Degradation</h2>
+
+      <p>
+        The scheduler-yield call was temporarily removed from the ISR to test
+        degraded operation. Interrupts continued to be detected, and the
+        bottom-half tasks still executed, but their wake-up timing became less
+        immediate and less deterministic.
+      </p>
+
+      <p>
+        Restoring <code>portYIELD_FROM_ISR()</code> returned the system to its
+        expected timing behavior.
+      </p>
+    </section>
+
+    <section id="readme">
+      <h2>Full Documentation</h2>
+
+      <p>
+        <a href="../README.md">
+          View the complete project README
+        </a>
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>
+      Andrew VanAuken |
+      University of Central Florida |
+      EEL 4775
+    </p>
+  </footer>
+
 </body>
 </html>
