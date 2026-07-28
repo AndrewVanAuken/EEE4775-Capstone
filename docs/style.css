@@ -118,24 +118,24 @@ a:hover {
 
 .architecture-image {
     display: block;
-    width: auto;
-    max-width: 500px;
-    max-height: 400px;
+    width: 100%;
+    max-width: 700px;
     height: auto;
     margin: 20px auto;
-    border: 1px solid #ccc;
+    border: 1px solid #ccd6e0;
     border-radius: 8px;
+    object-fit: contain;
 }
 
 .logic-image {
     display: block;
-    width: auto;
-    max-width: 350px;
-    max-height: 250px;
+    width: 100%;
+    max-width: 700px;
     height: auto;
     margin: 20px auto;
-    border: 1px solid #ccc;
+    border: 1px solid #ccd6e0;
     border-radius: 8px;
+    object-fit: contain;
 }
 
 .diagram {
