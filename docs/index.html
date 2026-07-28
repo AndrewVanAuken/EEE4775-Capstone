@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
 
   <title>SAT-1 Real-Time Ground Command System</title>
   <meta
     name="description"
     content="Andrew VanAuken's EEL 4775 real-time systems capstone featuring an ESP32-S3, FreeRTOS interrupt handling, timing evidence, and fault injection.">
+
+  <meta property="og:title" content="SAT-1: Interrupt-Driven Real-Time Ground Command System">
+  <meta property="og:description" content="ESP32-S3 and FreeRTOS capstone with interrupt timing evidence, hazard analysis, and fault injection.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://andrewvanauken.github.io/EEE4775-Capstone/assets/App3%20Concurrency%20Diagram.png">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -137,26 +143,71 @@
 
       <h3>System Flow</h3>
 
-      <pre class="flow-diagram">
-GPIO18 Button
-      |
-      v
-Hardware Interrupt
-      |
-      v
-IRAM_ATTR ISR
-      |
-      +------------------+
-      |                  |
-      v                  v
-Binary Semaphore   Direct Notification
-      |                  |
-      v                  v
-       Bottom-Half Tasks
-              |
-              v
-     Timing Results
-      </pre>
+      <svg class="flow-svg" viewBox="0 0 760 572" role="img"
+           aria-label="Signal flow: a GPIO18 falling edge triggers the IRAM_ATTR ISR, which signals a binary semaphore and a direct task notification; each wakes a bottom-half task at priority 12, and both report timing results.">
+
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" class="flow-head"/>
+          </marker>
+        </defs>
+
+        <!-- connectors -->
+        <g class="flow-line" marker-end="url(#arrow)">
+          <path d="M 380 72  V 96"/>
+          <path d="M 380 152 V 176"/>
+          <path d="M 380 252 V 280 H 190 V 304"/>
+          <path d="M 380 252 V 280 H 570 V 304"/>
+          <path d="M 190 360 V 384"/>
+          <path d="M 570 360 V 384"/>
+          <path d="M 190 440 V 468 H 380 V 494"/>
+          <path d="M 570 440 V 468 H 380 V 494"/>
+        </g>
+
+        <!-- GPIO19 measurement tap -->
+        <path d="M 490 214 H 598" class="flow-tap"/>
+        <text x="606" y="218" class="flow-note">GPIO19 pulse</text>
+
+        <!-- source -->
+        <rect x="270" y="16" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="380" y="40" class="flow-title">GPIO18 Button</text>
+        <text x="380" y="58" class="flow-sub">falling edge</text>
+
+        <rect x="270" y="96" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="380" y="120" class="flow-title">Hardware Interrupt</text>
+        <text x="380" y="138" class="flow-sub">GPIO ISR dispatch</text>
+
+        <!-- top half -->
+        <rect x="270" y="176" width="220" height="76" rx="6" class="flow-box flow-box-key"/>
+        <text x="380" y="200" class="flow-title flow-title-key">IRAM_ATTR ISR</text>
+        <text x="380" y="219" class="flow-sub flow-sub-key">top half — ISR-safe calls only</text>
+        <text x="380" y="238" class="flow-sub flow-sub-key">portYIELD_FROM_ISR()</text>
+
+        <!-- signalling -->
+        <rect x="80" y="304" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="190" y="328" class="flow-title">Binary Semaphore</text>
+        <text x="190" y="346" class="flow-sub">xSemaphoreGiveFromISR()</text>
+
+        <rect x="460" y="304" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="570" y="328" class="flow-title">Direct Notification</text>
+        <text x="570" y="346" class="flow-sub">vTaskNotifyGiveFromISR()</text>
+
+        <!-- bottom halves -->
+        <rect x="80" y="384" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="190" y="408" class="flow-title">Semaphore Task</text>
+        <text x="190" y="426" class="flow-sub">bottom half — prio 12</text>
+
+        <rect x="460" y="384" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="570" y="408" class="flow-title">Notification Task</text>
+        <text x="570" y="426" class="flow-sub">bottom half — prio 12</text>
+
+        <!-- output -->
+        <rect x="270" y="494" width="220" height="56" rx="6" class="flow-box"/>
+        <text x="380" y="518" class="flow-title">Timing Results</text>
+        <text x="380" y="536" class="flow-sub">serial report + latency</text>
+
+      </svg>
 
       <p>
         The ISR responds immediately to the GPIO18 falling edge and performs
@@ -472,7 +523,11 @@ Binary Semaphore   Direct Notification
         hazard analysis, build instructions, and supporting details.
       </p>
 
-      <a class="primary-link" href="../README.md">
+      <a
+        class="primary-link"
+        href="https://github.com/AndrewVanAuken/EEE4775-Capstone/blob/main/README.md"
+        target="_blank"
+        rel="noopener noreferrer">
         View the Complete README
       </a>
     </section>
