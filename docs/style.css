@@ -116,21 +116,25 @@ a:hover {
    Images
    =========================== */
 
-.architecture-diagram {
+.architecture-image {
     display: block;
-    width: 100%;
-    max-width: 750px;
-    margin: 25px auto;
-    border: 1px solid #bbb;
+    width: auto;
+    max-width: 500px;
+    max-height: 400px;
+    height: auto;
+    margin: 20px auto;
+    border: 1px solid #ccc;
     border-radius: 8px;
 }
 
-.logic-diagram {
+.logic-image {
     display: block;
-    width: 100%;
-    max-width: 500px;
+    width: auto;
+    max-width: 350px;
+    max-height: 250px;
+    height: auto;
     margin: 20px auto;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
     border-radius: 8px;
 }
 
