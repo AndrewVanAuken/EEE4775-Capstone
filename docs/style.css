@@ -193,3 +193,25 @@ footer {
         font-size: .9rem;
     }
 }
+
+/* Make logic analyzer screenshots full-width and readable */
+
+.evidence-grid {
+    display: block;
+}
+
+.evidence-card {
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.logic-image {
+    display: block;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
