@@ -1,52 +1,191 @@
+/* ========================================
+   SAT-1 Real-Time Ground Command System
+   Andrew VanAuken
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  line-height: 1.6;
-  color: #1f2937;
-  background: #f4f7fb;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+    background: #f4f6f8;
+    color: #222;
 }
 
-h1,
-h2 {
-  color: #12355b;
+header {
+    background: #003366;
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
 }
 
-h1 {
-  margin-bottom: 8px;
+header h1 {
+    margin-bottom: 10px;
+    font-size: 2.2rem;
 }
 
-h2 {
-  border-bottom: 2px solid #d5deea;
-  padding-bottom: 8px;
-  margin-top: 40px;
+header p {
+    margin-top: 5px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
 }
 
 section {
-  background: white;
-  padding: 24px;
-  margin: 24px 0;
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    background: white;
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
 }
 
-a {
-  color: #0066cc;
+h2 {
+    color: #003366;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e5e5e5;
+    padding-bottom: 8px;
+}
+
+h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #003366;
+}
+
+h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+pre {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+code {
+    background: #ececec;
+    padding: 2px 5px;
+    border-radius: 4px;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
 }
 
-th,
-td {
-  border: 1px solid #ccd6e0;
-  padding: 10px;
-  text-align: left;
+table th {
+    background: #003366;
+    color: white;
 }
 
-th {
-  background: #eaf0f7;
+table th,
+table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+a {
+    color: #005bbb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===========================
+   Images
+   =========================== */
+
+.architecture-diagram {
+    display: block;
+    width: 100%;
+    max-width: 750px;
+    margin: 25px auto;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+.logic-diagram {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+.diagram {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+/* ===========================
+   Lists
+   =========================== */
+
+ul {
+    margin-left: 25px;
+}
+
+ol {
+    margin-left: 25px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* ===========================
+   Footer
+   =========================== */
+
+footer {
+    background: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* ===========================
+   Responsive
+   =========================== */
+
+@media (max-width: 768px) {
+
+    header h1 {
+        font-size: 1.6rem;
+    }
+
+    section {
+        padding: 18px;
+    }
+
+    table {
+        font-size: .9rem;
+    }
 }
