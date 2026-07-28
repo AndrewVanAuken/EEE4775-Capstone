@@ -354,6 +354,90 @@ pre code{
 }
 
 /* ===========================
+   Video embed
+   =========================== */
+.video-frame{
+    position:relative;
+    width:100%;
+    max-width:860px;
+    margin:0 auto 28px;
+    aspect-ratio:16 / 9;
+    background:var(--panel-deep);
+    border:1px solid var(--border);
+    border-radius:6px;
+    overflow:hidden;
+}
+
+.video-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+}
+
+/* ===========================
+   Unfinished-content markers
+   Delete .todo classes once filled in.
+   =========================== */
+.todo{
+    color:var(--warn);
+}
+
+td.todo{
+    color:var(--warn);
+}
+
+.todo-note{
+    font-family:var(--mono);
+    font-size:.8rem;
+    color:var(--warn);
+    border-left:2px solid var(--warn);
+    padding-left:14px;
+}
+
+.todo-note::before{
+    content:"◷ ";
+}
+
+tfoot td{
+    background:var(--panel-deep);
+    font-weight:600;
+    border-top:1px solid var(--accent-deep);
+}
+
+/* ===========================
+   Collapsible README
+   =========================== */
+.readme-block{
+    margin-bottom:22px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background:var(--panel-deep);
+}
+
+.readme-block summary{
+    font-family:var(--mono);
+    font-size:.85rem;
+    letter-spacing:.03em;
+    color:var(--accent);
+    padding:14px 18px;
+    cursor:pointer;
+}
+
+.readme-block summary:hover{
+    background:rgba(94,234,212,.05);
+}
+
+.readme-block pre{
+    border:0;
+    border-top:1px solid var(--border);
+    border-radius:0;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+
+/* ===========================
    Signal flow diagram
    =========================== */
 .flow-svg{
