@@ -5,25 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SAT-1 Real-Time Ground Command System</title>
+  <meta
+    name="description"
+    content="Andrew VanAuken's EEL 4775 real-time systems capstone featuring an ESP32-S3, FreeRTOS interrupt handling, timing evidence, and fault injection.">
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <header>
-    <h1>SAT-1: Interrupt-Driven Real-Time Ground Command System</h1>
+  <header class="site-header">
+    <div class="header-content">
+      <p class="eyebrow">EEL 4775 Real-Time Systems Capstone</p>
 
-    <p>
-      Andrew VanAuken |
-      EEL 4775 Real-Time Systems Final Integration Capstone
-    </p>
+      <h1>SAT-1: Interrupt-Driven Real-Time Ground Command System</h1>
 
-    <p>
-      ESP32-S3 • FreeRTOS • Embedded C • Wokwi
-    </p>
+      <p class="subtitle">
+        Andrew VanAuken · University of Central Florida
+      </p>
+
+      <p class="technology-line">
+        ESP32-S3 · FreeRTOS · Embedded C · Wokwi
+      </p>
+
+      <div class="header-links">
+        <a
+          href="https://wokwi.com/projects/468122086654300161"
+          target="_blank"
+          rel="noopener noreferrer">
+          Open Wokwi Project
+        </a>
+
+        <a
+          href="https://github.com/AndrewVanAuken/EEE4775-Capstone"
+          target="_blank"
+          rel="noopener noreferrer">
+          View GitHub Repository
+        </a>
+      </div>
+    </div>
   </header>
 
   <main>
+
+    <section id="theme">
+      <h2>One-Sentence Theme</h2>
+
+      <p class="theme-statement">
+        An interrupt-driven satellite ground command system that uses FreeRTOS
+        top-half and bottom-half processing to provide bounded response to
+        spacecraft events, demonstrating real-time embedded system design for
+        an Entry-Level Electrical Engineer role.
+      </p>
+    </section>
 
     <section id="overview">
       <h2>Project Overview</h2>
@@ -40,30 +74,70 @@
         Direct Task Notification. Their wake-up latency is measured under idle
         and loaded processor conditions using the Wokwi Logic Analyzer.
       </p>
+
+      <p>
+        The capstone builds on Application 3 while incorporating periodic
+        background tasks from Application 2. This creates processor load during
+        interrupt testing and demonstrates interrupt handling, task
+        synchronization, scheduling, timing analysis, and engineering
+        documentation in one complete project.
+      </p>
     </section>
 
     <section id="demo">
       <h2>Project Demo</h2>
 
-      <p>
-        <strong>Wokwi Project:</strong>
-        <a href="https://wokwi.com/projects/468122086654300161"
-           target="_blank"
-           rel="noopener noreferrer">
-          Open SAT-1 in Wokwi
-        </a>
-      </p>
+      <div class="link-grid">
+        <article class="link-card">
+          <h3>Wokwi Simulation</h3>
+          <p>
+            Run the ESP32-S3 simulation, press the GPIO18 button, and observe
+            the interrupt and bottom-half timing output.
+          </p>
+          <a
+            href="https://wokwi.com/projects/468122086654300161"
+            target="_blank"
+            rel="noopener noreferrer">
+            Open SAT-1 in Wokwi
+          </a>
+        </article>
 
-      <p>
-        <strong>Demo Video:</strong>
-        Add the YouTube link after recording.
-      </p>
+        <article class="link-card">
+          <h3>Source Code</h3>
+          <p>
+            View the source files, README, diagrams, and GitHub Pages
+            portfolio.
+          </p>
+          <a
+            href="https://github.com/AndrewVanAuken/EEE4775-Capstone"
+            target="_blank"
+            rel="noopener noreferrer">
+            View GitHub Repository
+          </a>
+        </article>
+
+        <article class="link-card">
+          <h3>Demo Video</h3>
+          <p>
+            The final 3–5 minute demonstration video will be added after
+            recording.
+          </p>
+          <span class="coming-soon">YouTube link coming soon</span>
+        </article>
+      </div>
     </section>
 
     <section id="architecture">
       <h2>System Architecture</h2>
 
-      <pre>
+      <img
+        src="assets/App3%20Concurrency%20Diagram.png"
+        alt="SAT-1 concurrency diagram showing the ISR, bottom-half tasks, and periodic background tasks"
+        class="diagram">
+
+      <h3>System Flow</h3>
+
+      <pre class="flow-diagram">
 GPIO18 Button
       |
       v
@@ -85,194 +159,329 @@ Binary Semaphore   Direct Notification
       </pre>
 
       <p>
-        The ISR performs only ISR-safe operations. It records the interrupt
-        timestamp, generates a GPIO19 timing pulse, and signals the two
-        bottom-half tasks. Longer processing and reporting are deferred to
-        normal FreeRTOS task context.
+        The ISR responds immediately to the GPIO18 falling edge and performs
+        only ISR-safe operations. It records a timestamp, applies debounce
+        protection, generates a GPIO19 timing pulse, and signals both
+        bottom-half tasks.
+      </p>
+
+      <p>
+        Longer processing and reporting are deferred to FreeRTOS task context.
+        The Binary Semaphore and Direct Task Notification paths are measured
+        separately so their wake-up behavior can be compared.
       </p>
     </section>
 
     <section id="timing">
       <h2>Tasks and Timing Evidence</h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Period</th>
-            <th>Priority</th>
-            <th>Deadline</th>
-          </tr>
-        </thead>
+      <h3>Task Table</h3>
 
-        <tbody>
-          <tr>
-            <td>Load Task A</td>
-            <td>10 ms</td>
-            <td>15</td>
-            <td>10 ms</td>
-          </tr>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Period</th>
+              <th>Priority</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
 
-          <tr>
-            <td>Load Task B</td>
-            <td>20 ms</td>
-            <td>10</td>
-            <td>20 ms</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>Load Task A</td>
+              <td>10 ms</td>
+              <td>15</td>
+              <td>10 ms</td>
+            </tr>
 
-          <tr>
-            <td>Load Task C</td>
-            <td>50 ms</td>
-            <td>5</td>
-            <td>50 ms</td>
-          </tr>
+            <tr>
+              <td>Load Task B</td>
+              <td>20 ms</td>
+              <td>10</td>
+              <td>20 ms</td>
+            </tr>
 
-          <tr>
-            <td>Load Task D</td>
-            <td>100 ms</td>
-            <td>2</td>
-            <td>100 ms</td>
-          </tr>
+            <tr>
+              <td>Load Task C</td>
+              <td>50 ms</td>
+              <td>5</td>
+              <td>50 ms</td>
+            </tr>
 
-          <tr>
-            <td>Binary Semaphore Task</td>
-            <td>Event-driven</td>
-            <td>12</td>
-            <td>Immediate</td>
-          </tr>
+            <tr>
+              <td>Load Task D</td>
+              <td>100 ms</td>
+              <td>2</td>
+              <td>100 ms</td>
+            </tr>
 
-          <tr>
-            <td>Direct Notification Task</td>
-            <td>Event-driven</td>
-            <td>12</td>
-            <td>Immediate</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>Binary Semaphore Task</td>
+              <td>Event-driven</td>
+              <td>12</td>
+              <td>Immediate</td>
+            </tr>
 
-      <h3>Interrupt Response</h3>
+            <tr>
+              <td>Direct Notification Task</td>
+              <td>Event-driven</td>
+              <td>12</td>
+              <td>Immediate</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Configuration</th>
-            <th>GPIO18 to GPIO19</th>
-          </tr>
-        </thead>
+      <h3>Interrupt Response Time</h3>
 
-        <tbody>
-          <tr>
-            <td>Idle</td>
-            <td>21.593 µs</td>
-          </tr>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Configuration</th>
+              <th>GPIO18 to GPIO19</th>
+            </tr>
+          </thead>
 
-          <tr>
-            <td>Loaded</td>
-            <td>21.593 µs</td>
-          </tr>
-        </tbody>
-      </table>
+          <tbody>
+            <tr>
+              <td>Idle</td>
+              <td>21.593 µs</td>
+            </tr>
+
+            <tr>
+              <td>Loaded</td>
+              <td>21.593 µs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The interrupt response remained essentially unchanged under load,
+        showing that ISR entry stayed bounded while the background tasks were
+        active.
+      </p>
 
       <h3>Bottom-Half Wake-Up Latency</h3>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Configuration</th>
-            <th>Binary Semaphore</th>
-            <th>Direct Notification</th>
-          </tr>
-        </thead>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Configuration</th>
+              <th>Binary Semaphore</th>
+              <th>Direct Task Notification</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr>
-            <td>Idle</td>
-            <td>2,644 µs</td>
-            <td>30 µs</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>Idle</td>
+              <td>2,644 µs</td>
+              <td>30 µs</td>
+            </tr>
 
-          <tr>
-            <td>Loaded</td>
-            <td>10,425 µs</td>
-            <td>18,996 µs</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>Loaded</td>
+              <td>10,425 µs</td>
+              <td>18,996 µs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The increased loaded latency occurred after the ISR while the
+        bottom-half tasks waited to be scheduled. Load Task A runs at priority
+        15, above the bottom-half priority of 12, so it can delay their
+        execution.
+      </p>
+
+      <h3>Logic Analyzer Evidence</h3>
+
+      <div class="evidence-grid">
+        <article class="evidence-card">
+          <h4>Idle Configuration</h4>
+
+          <img
+            src="assets/Idle%20Logic%20Analyzer.png"
+            alt="Idle logic analyzer capture showing GPIO18 and GPIO19 timing"
+            class="diagram">
+
+          <p>
+            With background load disabled, the GPIO18-to-GPIO19 interrupt
+            response measured 21.593 µs.
+          </p>
+        </article>
+
+        <article class="evidence-card">
+          <h4>Loaded Configuration</h4>
+
+          <img
+            src="assets/Loaded%20Logic%20Analyzer.png"
+            alt="Loaded logic analyzer capture showing GPIO18 and GPIO19 timing"
+            class="diagram">
+
+          <p>
+            With the Application 2 workload enabled, the measured interrupt
+            response remained 21.593 µs.
+          </p>
+        </article>
+      </div>
     </section>
 
     <section id="hazards">
       <h2>Hazard Analysis</h2>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Hazard</th>
-            <th>Effect</th>
-            <th>Mitigation</th>
-          </tr>
-        </thead>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Hazard</th>
+              <th>Effect</th>
+              <th>Mitigation</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr>
-            <td>Long ISR execution</td>
-            <td>Increased interrupt latency</td>
-            <td>Keep the ISR minimal and defer processing</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>Long ISR execution</td>
+              <td>Increased interrupt latency</td>
+              <td>Keep the ISR minimal and defer processing</td>
+            </tr>
 
-          <tr>
-            <td>Button bounce</td>
-            <td>Repeated interrupt events</td>
-            <td>Apply timestamp-based debounce logic</td>
-          </tr>
+            <tr>
+              <td>Button bounce</td>
+              <td>Repeated interrupt events</td>
+              <td>Apply timestamp-based debounce logic</td>
+            </tr>
 
-          <tr>
-            <td>Missing scheduler yield</td>
-            <td>Delayed bottom-half execution</td>
-            <td>Use portYIELD_FROM_ISR()</td>
-          </tr>
+            <tr>
+              <td>Missing scheduler yield</td>
+              <td>Delayed bottom-half execution</td>
+              <td>Use <code>portYIELD_FROM_ISR()</code></td>
+            </tr>
 
-          <tr>
-            <td>Heavy processor load</td>
-            <td>Increased wake-up latency</td>
-            <td>Use fixed-priority scheduling and timing verification</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td>Heavy processor load</td>
+              <td>Increased bottom-half latency</td>
+              <td>Use fixed-priority scheduling and timing verification</td>
+            </tr>
+
+            <tr>
+              <td>Non-ISR-safe function call</td>
+              <td>Unpredictable behavior or system failure</td>
+              <td>Use only ISR-safe FreeRTOS APIs inside the ISR</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section id="degradation">
       <h2>Fault Injection and Graceful Degradation</h2>
 
-      <p>
-        The scheduler-yield call was temporarily removed from the ISR to test
-        degraded operation. Interrupts continued to be detected, and the
-        bottom-half tasks still executed, but their wake-up timing became less
-        immediate and less deterministic.
-      </p>
+      <h3>Fault Introduced</h3>
 
       <p>
-        Restoring <code>portYIELD_FROM_ISR()</code> returned the system to its
-        expected timing behavior.
+        The scheduler-yield call was temporarily removed from the ISR:
+      </p>
+
+      <pre class="code-block"><code>// portYIELD_FROM_ISR(higher_woken);</code></pre>
+
+      <h3>Prediction</h3>
+
+      <p>
+        The ISR should continue delivering both signals, but the awakened
+        bottom-half tasks might not run immediately after the ISR returns.
+        Their response was expected to become slower and less deterministic.
+      </p>
+
+      <h3>Observation</h3>
+
+      <p>
+        Interrupts continued to be detected, and both bottom-half tasks still
+        executed. However, their wake-up timing became less immediate and less
+        predictable.
+      </p>
+
+      <h3>Recovery</h3>
+
+      <p>
+        The line was restored in the final working implementation:
+      </p>
+
+      <pre class="code-block"><code>portYIELD_FROM_ISR(higher_woken);</code></pre>
+
+      <p>
+        The system therefore degraded in timing performance rather than
+        failing completely. Interrupt detection and event delivery remained
+        operational throughout the experiment.
       </p>
     </section>
 
-    <section id="readme">
+    <section id="build">
+      <h2>Build and Run</h2>
+
+      <ol>
+        <li>Open the linked Wokwi project.</li>
+        <li>Start the ESP32-S3 simulation.</li>
+        <li>Open the Serial Monitor.</li>
+        <li>Press the GPIO18 pushbutton.</li>
+        <li>Observe the semaphore and notification latency results.</li>
+        <li>
+          Set <code>WITH_LOAD</code> to <code>1</code> to repeat the test with
+          the Application 2 background workload.
+        </li>
+        <li>
+          Use the Wokwi Logic Analyzer to capture the GPIO18 and GPIO19 timing
+          signals.
+        </li>
+      </ol>
+    </section>
+
+    <section id="role">
+      <h2>Tailored for an Entry-Level Electrical Engineer</h2>
+
+      <p>
+        This project demonstrates practical skills relevant to electrical and
+        embedded engineering positions, including:
+      </p>
+
+      <ul class="skills-list">
+        <li>Interrupt handling</li>
+        <li>FreeRTOS task synchronization</li>
+        <li>Embedded C programming</li>
+        <li>Real-time scheduling</li>
+        <li>Timing and latency analysis</li>
+        <li>Logic analyzer debugging</li>
+        <li>Hardware/software integration</li>
+        <li>Hazard analysis</li>
+        <li>Technical documentation</li>
+      </ul>
+    </section>
+
+    <section id="documentation">
       <h2>Full Documentation</h2>
 
       <p>
-        <a href="../README.md">
-          View the complete project README
-        </a>
+        The full project README contains the project summary, timing tables,
+        hazard analysis, build instructions, and supporting details.
       </p>
+
+      <a class="primary-link" href="../README.md">
+        View the Complete README
+      </a>
     </section>
 
   </main>
 
-  <footer>
+  <footer class="site-footer">
     <p>
-      Andrew VanAuken |
-      University of Central Florida |
-      EEL 4775
+      Andrew VanAuken · University of Central Florida · EEL 4775 · Summer 2026
     </p>
   </footer>
 
