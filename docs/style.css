@@ -323,7 +323,7 @@ a:hover{
 }
 
 /* ===========================
-   Code & flow diagram
+   Code blocks
    =========================== */
 pre{
     background:var(--panel-deep);
@@ -353,20 +353,71 @@ pre code{
     font-size:1em;
 }
 
-/* ASCII signal-flow block — the page's signature element */
-.flow-diagram{
+/* ===========================
+   Signal flow diagram
+   =========================== */
+.flow-svg{
     display:block;
-    width:fit-content;
-    max-width:100%;
-    margin:24px auto;
-    padding:26px 34px;
-    line-height:1.5;
-    color:var(--accent);
-    background:
-        linear-gradient(rgba(94,234,212,.03), rgba(94,234,212,.03)),
-        var(--panel-deep);
-    border:1px solid var(--accent-deep);
-    box-shadow:inset 0 0 40px rgba(94,234,212,.05);
+    width:100%;
+    max-width:760px;
+    margin:26px auto;
+}
+
+.flow-box{
+    fill:var(--panel-deep);
+    stroke:var(--border-lit);
+    stroke-width:1;
+}
+
+.flow-box-key{
+    fill:rgba(94,234,212,.07);
+    stroke:var(--accent);
+}
+
+.flow-line{
+    fill:none;
+    stroke:var(--border-lit);
+    stroke-width:1.5;
+}
+
+.flow-head{
+    fill:var(--border-lit);
+}
+
+.flow-tap{
+    fill:none;
+    stroke:var(--warn);
+    stroke-width:1;
+    stroke-dasharray:3 3;
+}
+
+.flow-title{
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:600;
+    fill:var(--ink);
+    text-anchor:middle;
+}
+
+.flow-title-key{
+    fill:var(--accent);
+}
+
+.flow-sub{
+    font-family:var(--mono);
+    font-size:10px;
+    fill:var(--ink-dim);
+    text-anchor:middle;
+}
+
+.flow-sub-key{
+    fill:var(--accent-deep);
+}
+
+.flow-note{
+    font-family:var(--mono);
+    font-size:10px;
+    fill:var(--warn);
 }
 
 /* ===========================
@@ -533,11 +584,6 @@ ol li::marker{
 
     .header-links a{
         text-align:center;
-    }
-
-    .flow-diagram{
-        font-size:.72rem;
-        padding:18px;
     }
 
     table{
