@@ -55,7 +55,7 @@
   <main>
 
     <section id="theme">
-      <h2>One-Sentence Theme</h2>
+      <h2>Theme</h2>
 
       <p class="theme-statement">
         An interrupt-driven satellite ground command system that uses FreeRTOS
@@ -82,13 +82,14 @@
       </p>
 
       <p>
-        Application 5 runs as the system spine. Its interrupt-driven command
-        path is the backbone of SAT-1, extended with the interrupt and
-        synchronization work from Application 3 and the periodic background
-        tasks from Application 2. Those background tasks create processor load
-        during interrupt testing, so the integrated system demonstrates
+        Application 3 provides the system spine. Its interrupt-driven command
+        path &mdash; the ISR, the two signaling mechanisms, and the bottom-half
+        tasks &mdash; is the subject of study. Although the periodic load tasks
+        originate from Application 2, they are used solely to generate processor
+        contention while evaluating the interrupt-driven behavior of the
+        Application 3 system. Together the integrated system demonstrates
         interrupt handling, task synchronization, scheduling, timing analysis,
-        and engineering documentation in one coherent product.
+        and engineering documentation as one coherent product.
       </p>
     </section>
 
@@ -236,6 +237,24 @@
         The Binary Semaphore and Direct Task Notification paths are measured
         separately so their wake-up behavior can be compared.
       </p>
+    </section>
+
+    <section id="hardware">
+      <h2>Hardware / Test Setup</h2>
+
+      <p>
+        The interrupt-driven system was validated in Wokwi using an ESP32-S3
+        development board, a pushbutton connected to GPIO18, and a logic
+        analyzer monitoring GPIO19. The ISR toggles GPIO19 on entry and exit,
+        allowing interrupt timing and wake-up latency to be measured while
+        comparing the binary semaphore and direct task notification
+        implementations.
+      </p>
+
+      <img
+        src="assets/Wokwi%20Circuit.png"
+        alt="Wokwi circuit: ESP32-S3 with a pushbutton on GPIO18 to ground, GPIO19 routed to the logic analyzer, and a shared ground connection"
+        class="architecture-image">
     </section>
 
     <section id="timing">
@@ -654,6 +673,37 @@
       </p>
     </section>
 
+    <section id="ai-disclosure">
+      <h2>AI Assistance Disclosure</h2>
+
+      <p>
+        ChatGPT (OpenAI) and Claude (Anthropic) were used to help create and
+        organize this GitHub Pages portfolio site, including its layout,
+        styling, and the structure and wording of several written sections.
+        Claude was also used to help instrument the firmware for worst-case
+        execution time measurement and to review the resulting timing data.
+      </p>
+
+      <p>
+        The Application 3 scaffold provided with the course materials contains
+        AI-assisted portions disclosed in its own header, including the
+        <code>WITH_LOAD</code> compile-time switch and the background-load task
+        skeletons.
+      </p>
+
+      <p>
+        All timing measurements reported on this site were run and recorded by
+        the author, as were the logic analyzer captures. The choice of
+        Application 3 as the system spine, the project theme, the hazard
+        analysis, the fault-injection experiment, and the final reflection are
+        the author's own work.
+      </p>
+
+      <p class="todo">
+        Add links to the ChatGPT and Claude chat transcripts here.
+      </p>
+    </section>
+
     <section id="documentation">
       <h2>Full Documentation</h2>
 
@@ -674,6 +724,28 @@
         rel="noopener noreferrer">
         View the README on GitHub
       </a>
+    </section>
+
+    <section id="conclusion">
+      <h2>Conclusion</h2>
+
+      <p>
+        This project demonstrates the implementation and evaluation of an
+        interrupt-driven real-time embedded system using FreeRTOS on the
+        ESP32-S3. Timing measurements, schedulability analysis, and fault
+        injection confirmed predictable behavior under both normal and loaded
+        operating conditions.
+      </p>
+
+      <p>
+        Worst-case execution times measured in isolation give a periodic
+        utilization of U = 0.3623, below the rate-monotonic bound of 0.7568, so
+        the task set is schedulable under both Rate-Monotonic and Earliest
+        Deadline First scheduling. Removing the scheduler yield from the ISR
+        degraded bottom-half wake timing without halting interrupt detection or
+        event delivery, confirming that the system loses timing performance
+        gracefully rather than failing outright.
+      </p>
     </section>
 
   </main>
