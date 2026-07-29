@@ -81,6 +81,14 @@ body{
     margin:0 auto;
 }
 
+/* the global p{max-width:75ch} would shrink these boxes and push
+   their centered text left — cancel it inside the header */
+.site-header p{
+    max-width:none;
+    margin-left:auto;
+    margin-right:auto;
+}
+
 .eyebrow{
     display:inline-block;
     font-family:var(--mono);
@@ -102,7 +110,9 @@ body{
     line-height:1.25;
     letter-spacing:-.01em;
     color:#fff;
-    margin-bottom:18px;
+    max-width:20ch;
+    margin:0 auto 18px;
+    text-wrap:balance;
 }
 
 .subtitle{
@@ -374,6 +384,25 @@ pre code{
     width:100%;
     height:100%;
     border:0;
+}
+
+/* ===========================
+   Footnotes and equations
+   =========================== */
+.footnote{
+    font-size:.82rem;
+    color:var(--ink-dim);
+    margin-top:-8px;
+}
+
+.equation{
+    font-family:var(--mono);
+    font-size:.95rem;
+    color:var(--accent);
+    background:var(--panel-deep);
+    border-left:2px solid var(--accent-deep);
+    padding:14px 20px;
+    border-radius:0 6px 6px 0;
 }
 
 /* ===========================
