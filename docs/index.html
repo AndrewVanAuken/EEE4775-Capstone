@@ -244,9 +244,15 @@
       <h3>Task Table and WCET Evidence</h3>
 
       <p>
-        Worst-case execution time (C) was measured across repeated runs with
-        the background workload enabled. Utilization is computed per task as
-        U<sub>i</sub> = C / T and summed across the periodic task set.
+        To obtain accurate worst-case execution time (WCET) measurements for the
+        background load tasks, the original Application 3 scaffold was
+        instrumented with a boot-time self-test. Before the periodic tasks begin
+        executing, each load task runs multiple times in isolation on Core 1
+        without interference from other tasks. This allows the measured
+        execution times to represent the task's actual computation time rather
+        than a response time inflated by preemption. These measured WCET values
+        were then used to compute processor utilization as
+        U<sub>i</sub> = C<sub>i</sub> / T<sub>i</sub>.
       </p>
 
       <div class="table-wrapper">
@@ -266,8 +272,8 @@
             <tr>
               <td>Load Task A</td>
               <td>10 ms</td>
-              <td class="todo">— ms</td>
-              <td class="todo">—</td>
+              <td>0.347 ms</td>
+              <td>0.0347</td>
               <td>15</td>
               <td>10 ms</td>
             </tr>
@@ -275,8 +281,8 @@
             <tr>
               <td>Load Task B</td>
               <td>20 ms</td>
-              <td class="todo">— ms</td>
-              <td class="todo">—</td>
+              <td>1.977 ms</td>
+              <td>0.0989</td>
               <td>10</td>
               <td>20 ms</td>
             </tr>
@@ -284,8 +290,8 @@
             <tr>
               <td>Load Task C</td>
               <td>50 ms</td>
-              <td class="todo">— ms</td>
-              <td class="todo">—</td>
+              <td>8.271 ms</td>
+              <td>0.1654</td>
               <td>5</td>
               <td>50 ms</td>
             </tr>
@@ -293,8 +299,8 @@
             <tr>
               <td>Load Task D</td>
               <td>100 ms</td>
-              <td class="todo">— ms</td>
-              <td class="todo">—</td>
+              <td>6.334 ms</td>
+              <td>0.0633</td>
               <td>2</td>
               <td>100 ms</td>
             </tr>
@@ -302,7 +308,7 @@
             <tr>
               <td>Binary Semaphore Task</td>
               <td>Event-driven</td>
-              <td class="todo">— ms</td>
+              <td>n/a</td>
               <td>n/a</td>
               <td>12</td>
               <td>Immediate</td>
@@ -311,7 +317,7 @@
             <tr>
               <td>Direct Notification Task</td>
               <td>Event-driven</td>
-              <td class="todo">— ms</td>
+              <td>n/a</td>
               <td>n/a</td>
               <td>12</td>
               <td>Immediate</td>
@@ -320,34 +326,40 @@
 
           <tfoot>
             <tr>
-              <td colspan="3">Total utilization (periodic tasks)</td>
-              <td colspan="3" class="todo">U = &#931;C&#8202;/&#8202;T = —</td>
+              <td colspan="2">Total utilization (periodic tasks)</td>
+              <td colspan="4">U = 0.0347 + 0.0989 + 0.1654 + 0.0633 = 0.3623</td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <p class="todo-note">
-        Fill in the measured C values and the resulting utilization, then state
-        the schedulability verdict below.
-      </p>
-
       <h4>Schedulability</h4>
 
       <p>
         The four periodic load tasks use fixed-priority preemptive scheduling
-        with priorities assigned in rate-monotonic order, and each deadline
-        equals its period. The rate-monotonic bound for n = 4 independent
-        periodic tasks is n(2<sup>1/n</sup> &minus; 1) = 0.757.
-        <span class="todo">Measured U = — , which is at or below the RM bound,
-        so the periodic task set is schedulable under both Rate-Monotonic and
-        EDF.</span>
+        with priorities assigned according to the Rate-Monotonic policy, where
+        shorter periods receive higher priorities. Each task's deadline is equal
+        to its period. For four independent periodic tasks, the Rate-Monotonic
+        sufficient utilization bound is:
+      </p>
+
+      <p class="equation">
+        U<sub>RM</sub> = 4(2<sup>1/4</sup> &minus; 1) &#8776; 0.7568
       </p>
 
       <p>
-        The two event-driven bottom-half tasks are excluded from the periodic
-        utilization sum because they are aperiodic. They are bounded instead by
-        the measured wake-up latency reported below.
+        The measured processor utilization for the periodic task set is
+        U = 0.3623. Since 0.3623 &lt; 0.7568, the task set satisfies the
+        Rate-Monotonic schedulability test. Because the utilization is also
+        below the EDF feasibility limit of 1.0, the task set is schedulable
+        under both Rate-Monotonic and Earliest Deadline First scheduling.
+      </p>
+
+      <p>
+        The Binary Semaphore and Direct Notification bottom-half tasks are
+        event-driven rather than periodic, so they are not included in the
+        utilization calculation. Their real-time performance is evaluated
+        instead using the measured wake-up latency following an interrupt.
       </p>
 
       <h3>Interrupt Response Time</h3>
@@ -457,8 +469,7 @@
       <p>
         Hazards are mapped to IEC 61508, the functional-safety standard for
         electrical, electronic, and programmable electronic safety-related
-        systems. Part 3 covers software requirements; Part 7 covers techniques
-        and measures.
+        systems, and to MISRA C:2012 for coding-level requirements.
       </p>
 
       <div class="table-wrapper">
@@ -476,45 +487,40 @@
             <tr>
               <td>Long ISR execution</td>
               <td>Increased interrupt latency</td>
-              <td>Keep the ISR minimal and defer processing</td>
-              <td>IEC 61508-3 §7.4.3 — bounded response time</td>
+              <td>Keep the ISR minimal and defer processing to bottom-half tasks</td>
+              <td>IEC 61508-3 &mdash; software architectural design and real-time behavior</td>
             </tr>
 
             <tr>
               <td>Button bounce</td>
               <td>Repeated interrupt events</td>
               <td>Apply timestamp-based debounce logic</td>
-              <td>IEC 61508-7 — input signal conditioning</td>
+              <td>IEC 61508-7 &mdash; techniques and measures (input filtering and signal conditioning)</td>
             </tr>
 
             <tr>
               <td>Missing scheduler yield</td>
               <td>Delayed bottom-half execution</td>
-              <td>Use <code>portYIELD_FROM_ISR()</code></td>
-              <td>IEC 61508-3 §7.4.4 — defensive programming</td>
+              <td>Use <code>portYIELD_FROM_ISR()</code> when a higher-priority task is awakened</td>
+              <td>IEC 61508-3 &mdash; software design and task synchronization</td>
             </tr>
 
             <tr>
               <td>Heavy processor load</td>
               <td>Increased bottom-half latency</td>
-              <td>Use fixed-priority scheduling and timing verification</td>
-              <td>IEC 61508-3 §7.4.4 — deterministic scheduling</td>
+              <td>Use fixed-priority scheduling and verify timing</td>
+              <td>IEC 61508-3 &mdash; timing analysis and deterministic scheduling</td>
             </tr>
 
             <tr>
               <td>Non-ISR-safe function call</td>
               <td>Unpredictable behavior or system failure</td>
               <td>Use only ISR-safe FreeRTOS APIs inside the ISR</td>
-              <td>MISRA C:2012 Dir 4.1 — run-time failure avoidance</td>
+              <td>MISRA C:2012 Directive 4.1 &mdash; run-time failure avoidance</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <p class="todo-note">
-        Verify each clause number against the edition of IEC 61508 your course
-        references before submitting.
-      </p>
     </section>
 
     <section id="degradation">
@@ -603,29 +609,48 @@
     <section id="reflection">
       <h2>Final Reflection</h2>
 
-      <h3>What I would do differently</h3>
+      <h3>What I Would Do Differently</h3>
 
-      <p class="todo">
-        Replace this with the decisions you would revisit and why. A strong
-        answer here names a specific choice — for example, assigning Load Task A
-        a priority above the bottom-half tasks — and explains what you now know
-        that would change it.
+      <p>
+        If I were starting this project again, I would spend more time planning
+        the task priorities and system architecture before writing code. As the
+        project grew, it became more difficult to keep track of how the
+        interrupt service routine, bottom-half tasks, and periodic background
+        tasks interacted with one another. I also would have organized the
+        project documentation and GitHub Pages site earlier instead of waiting
+        until the end of the semester. Having the documentation completed as the
+        project progressed would have made the final integration much easier and
+        reduced the amount of work required during the last week.
       </p>
 
-      <h3>What was harder than expected</h3>
+      <h3>What Was Harder Than Expected</h3>
 
-      <p class="todo">
-        Replace this with where the real difficulty was: timing measurement,
-        integration across applications, simulator behavior, or scope control.
-        Be concrete about what surprised you.
+      <p>
+        The most difficult part of the project was measuring and understanding
+        timing behavior. It was one thing to write FreeRTOS tasks that worked
+        correctly, but it was another to verify interrupt response time and
+        explain why latency changed when background tasks were running. Using
+        the Wokwi Logic Analyzer and comparing the Binary Semaphore and Direct
+        Task Notification paths helped me better understand how scheduling
+        decisions affect system performance. Integrating work from multiple
+        applications into one final project also required more effort than I
+        originally expected because each application had been developed
+        independently throughout the semester.
       </p>
 
-      <h3>The most valuable thing I learned</h3>
+      <h3>The Most Valuable Thing I Learned</h3>
 
-      <p class="todo">
-        Replace this with the one thing you will carry into the next project or
-        an interview. Tie it back to the top-half and bottom-half split if that
-        is what landed hardest.
+      <p>
+        The most valuable lesson I learned was to keep interrupt service
+        routines as short as possible and defer additional processing to a
+        bottom-half task. Before this course, I knew interrupts were important,
+        but I did not fully understand why embedded systems separate
+        time-critical work from normal task execution. Seeing the difference in
+        measured interrupt latency and task wake-up time made the concept much
+        more meaningful. This project also gave me more experience with
+        FreeRTOS, task scheduling, timing analysis, and documenting engineering
+        decisions, all of which are skills I can discuss during interviews and
+        apply in future embedded systems projects.
       </p>
     </section>
 
