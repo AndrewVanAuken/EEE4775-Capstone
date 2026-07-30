@@ -22,7 +22,7 @@ An interrupt-driven satellite ground command system that uses FreeRTOS top-half 
 - **GitHub Pages:** https://andrewvanauken.github.io/EEE4775-Capstone/
 - **GitHub Repository:** https://github.com/AndrewVanAuken/EEE4775-Capstone
 - **Wokwi:** https://wokwi.com/projects/468122086654300161
-- **Video:** *(Add after recording.)*
+- **Video:** https://youtu.be/B9EnprE2-YU
 
 ---
 
